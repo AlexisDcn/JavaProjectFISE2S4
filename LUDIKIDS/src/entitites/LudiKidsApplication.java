@@ -10,6 +10,7 @@ public class LudiKidsApplication {
 
     private Stage primaryStage;
     private AccueilPane accueilPane;
+    private AdminPane adminPane;
     private BaseJeuPane gamePane;
     private JeuArdoisePane ardoisePane;
     private JeuQuizPane quizPane;
@@ -19,6 +20,7 @@ public class LudiKidsApplication {
     public LudiKidsApplication(Stage primaryStage) {
         this.primaryStage = primaryStage;
         this.accueilPane = new AccueilPane(this);
+        this.adminPane = new AdminPane(this);
         this.gamePane = new BaseJeuPane(this);
         this.ardoisePane = new JeuArdoisePane(this);
         this.quizPane = new JeuQuizPane(this);
@@ -53,6 +55,10 @@ public class LudiKidsApplication {
     public void toggleScreenAccueilGame() {
         toggleScreen(gamePane.getPane());
     }
+    
+    public void toggleScreenAdmin(){
+        toggleScreen(adminPane.getPane());
+    }
 
     public void toggleScreenGameArdoise() {
         toggleScreen(ardoisePane.getPane());
@@ -86,19 +92,7 @@ public class LudiKidsApplication {
         alert.showAndWait();
     }
 
-    /*
-    public void showGamePane(StackPane stackPane) {
-        primaryStage.setScene(new Scene(stackPane, 1080, 720));
-    }
-
-    public void showJeuArdoisePane() {
-        if (ardoisePane == null) {
-            ardoisePane = new JeuArdoisePane(this);
-        }
-        primaryStage.setScene(new Scene(ardoisePane.getPane(), 1080, 720));
-        currentPane = ardoisePane.getPane();
-    }
-     */
+    
 
     public Stage getPrimaryStage() {
         return primaryStage;

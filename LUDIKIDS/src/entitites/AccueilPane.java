@@ -120,7 +120,7 @@ public class AccueilPane {
 
     }
 
-    private VBox createLoginBox(Button originalLoginButton) {
+    private VBox createLoginBox(Button originalLoginButton, Stage dialogStage) {
         PasswordField passwordField = new PasswordField();
         Button loginButton = new Button("Connexion");
         VBox loginBox = new VBox(10, passwordField, loginButton);
@@ -129,7 +129,9 @@ public class AccueilPane {
         loginButton.setOnAction(e -> {
             if (checkPassword(passwordField.getText())) {
                 loggedIn = true;
-                ludiKidsApplication.toggleScreenAccueilGame();
+                dialogStage.close();
+                ludiKidsApplication.toggleScreenAdmin();
+                
             } else {
                 failedLoginAttempts++;
                 if (failedLoginAttempts >= 3) {
@@ -150,7 +152,7 @@ public class AccueilPane {
         Stage dialogStage = new Stage();
         dialogStage.initOwner(ludiKidsApplication.getPrimaryStage());
         dialogStage.setTitle("Se connecter");
-        VBox loginBox = createLoginBox(originalLoginButton);
+        VBox loginBox = createLoginBox(originalLoginButton,dialogStage);
 
         Scene dialogScene = new Scene(loginBox, 300, 200);
         dialogScene.setFill(javafx.scene.paint.Color.TRANSPARENT);

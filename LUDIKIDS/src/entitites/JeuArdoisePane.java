@@ -4,12 +4,14 @@ import javafx.geometry.Pos;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Slider;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseButton;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
 public class JeuArdoisePane {
@@ -21,7 +23,7 @@ public class JeuArdoisePane {
 
     private Color currentColor = Color.BLACK;
     private double brushSize = 2.0;
-    
+
     public JeuArdoisePane(LudiKidsApplication ludiKidsApplication) {
         this.ludiKidsApplication = ludiKidsApplication;
         pane = new StackPane();
@@ -30,70 +32,13 @@ public class JeuArdoisePane {
         setupEvents();
     }
 
-    private void setupCanva() {
-        Canvas canvas = new Canvas(500, 500);
-        GraphicsContext gc = canvas.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-
-        Button blackButton = new Button("Noir");
-        blackButton.setOnAction(e -> setCurrentColor(Color.BLACK));
-
-        Button redButton = new Button("Rouge");
-        redButton.setOnAction(e -> setCurrentColor(Color.RED));
-
-        Button greenButton = new Button("Vert");
-        greenButton.setOnAction(e -> setCurrentColor(Color.GREEN));
-
-        Button blueButton = new Button("Bleu");
-        blueButton.setOnAction(e -> setCurrentColor(Color.BLUE));
-
-        Button clearButton = new Button("Effacer");
-        clearButton.setOnAction(e -> {
-            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
-            gc.setFill(Color.WHITE);
-            gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
-        });
-
-        
-        
-        Slider sizeSlider = new Slider(1, 20, 2);
-        sizeSlider.setShowTickMarks(true);
-        sizeSlider.setShowTickLabels(true);
-        sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> brushSize = newValue.doubleValue());
-        HBox hbox = new HBox(10, blackButton, redButton, greenButton, blueButton, clearButton, sizeSlider);
-        hbox.setStyle("-fx-background-color: transparent");
-        
-
-        canvas.setOnMousePressed(event -> {
-            if (event.getButton() == MouseButton.PRIMARY) {
-                gc.setStroke(currentColor);
-            } else if (event.getButton() == MouseButton.SECONDARY) {
-                gc.setStroke(Color.WHITE);
-            }
-            gc.beginPath();
-            gc.lineTo(event.getX(), event.getY());
-            gc.stroke();
-        });
-
-        canvas.setOnMouseDragged(event -> {
-            gc.lineTo(event.getX(), event.getY());
-            gc.stroke();
-        });
-        StackPane.setAlignment(hbox, Pos.CENTER);
-        pane.getChildren().add(hbox);
-        pane.getChildren().add(canvas);
-    }
-
     private void setCurrentColor(Color color) {
         currentColor = color;
     }
-    
+
     private void setupGui() {
 
     }
-
-    
 
     private void setupEvents() {
         ImageView ecranImageView = new ImageView(ecranImage);
@@ -129,6 +74,57 @@ public class JeuArdoisePane {
 
         StackPane.setAlignment(retourButton, Pos.TOP_LEFT);
         pane.getChildren().add(retourButton);
+    }
+
+    private void setupCanva() {
+        Canvas canvas = new Canvas(900, 540);
+        GraphicsContext gc = canvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
+        gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+
+        Button clearButton = new Button("Effacer");
+        clearButton.setOnAction(e -> {
+            gc.clearRect(0, 0, canvas.getWidth(), canvas.getHeight());
+            gc.setFill(Color.WHITE);
+            gc.fillRect(0, 0, canvas.getWidth(), canvas.getHeight());
+        });
+
+        Slider sizeSlider = new Slider(1, 20, 2);
+        sizeSlider.setShowTickMarks(true);
+        sizeSlider.setShowTickLabels(true);
+        sizeSlider.valueProperty().addListener((observable, oldValue, newValue) -> {
+            brushSize = newValue.doubleValue();
+            gc.setLineWidth(brushSize); // Mettre à jour la taille du trait
+        });
+        ColorPicker colorPicker = new ColorPicker();
+        colorPicker.setOnAction(e -> currentColor = colorPicker.getValue());
+        
+        HBox hbox = new HBox(10);
+        hbox.setAlignment(Pos.BOTTOM_CENTER);
+        hbox.getChildren().addAll(sizeSlider, colorPicker, clearButton);
+
+        StackPane.setAlignment(hbox, Pos.BOTTOM_CENTER);
+
+        pane.getChildren().add(hbox); // Ajouter les deux au StackPane principal
+        pane.getChildren().add(canvas);
+        StackPane.setAlignment(canvas, Pos.CENTER); // Alignement du Canvas au centre
+
+        canvas.setOnMousePressed(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                gc.setStroke(currentColor);
+                gc.beginPath();
+                gc.lineTo(event.getX(), event.getY());
+                gc.stroke();
+            }
+        });
+
+        canvas.setOnMouseDragged(event -> {
+            if (event.getButton() == MouseButton.PRIMARY) {
+                gc.lineTo(event.getX(), event.getY());
+                gc.stroke();
+            }
+        });
+
     }
 
     public StackPane getPane() {
